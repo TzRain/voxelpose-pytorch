@@ -127,3 +127,11 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+#model & data
+/data
+/models
+/output
+
+events.out*
