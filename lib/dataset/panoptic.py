@@ -95,6 +95,21 @@ class Panoptic(JointsDataset):
             self.num_views = len(self.cam_list)
         elif self.image_set == 'save_voxel_pred':
             self.sequence_list = TRAIN_LIST[:-1]
+            self._interval = 3
+            self.cam_list = [(0, 12), (0, 6), (0, 23), (0, 13), (0, 3)][:self.num_views]
+            self.num_views = len(self.cam_list)
+        elif self.image_set == 'save_voxel_pred_loaded':
+            self.sequence_list = TRAIN_LIST[:-1]
+            self._interval = 3
+            self.cam_list = [(0, 12), (0, 6), (0, 23), (0, 13), (0, 3)][:self.num_views]
+            self.num_views = len(self.cam_list)
+        elif self.image_set == 'validation_save_voxel_pred':
+            self.sequence_list = VAL_LIST
+            self._interval = 12
+            self.cam_list = [(0, 12), (0, 6), (0, 23), (0, 13), (0, 3)][:self.num_views]
+            self.num_views = len(self.cam_list)
+        elif self.image_set == 'validation_save_voxel_pred_loaded':
+            self.sequence_list = VAL_LIST
             self._interval = 12
             self.cam_list = [(0, 12), (0, 6), (0, 23), (0, 13), (0, 3)][:self.num_views]
             self.num_views = len(self.cam_list)
@@ -267,10 +282,12 @@ class Panoptic(JointsDataset):
                 continue
 
             pred = preds[i].copy()
-            pred = pred[pred[:, 0, 3] >= 0]
+            
 
-            if self.image_set == 'save_voxel_pred':
+            if self.image_set == 'save_voxel_pred' or self.image_set == 'validation_save_voxel_pred':
                 self.db[index]['joints_3d_voxelpose_pred'] = pred
+                
+            pred = pred[pred[:, 0, 3] >= 0]
 
             for pose in pred:
                 mpjpes = []
@@ -297,8 +314,8 @@ class Panoptic(JointsDataset):
             aps.append(ap)
             recs.append(rec)
         
-        if self.image_set == 'save_voxel_pred':
-            self.db_file = 'group_{}_cam{}_final.pkl'.format(self.image_set, self.num_views)
+        if self.image_set == 'save_voxel_pred' or self.image_set == 'validation_save_voxel_pred':
+            self.db_file = 'group_{}_cam{}.pkl'.format(f'{self.image_set}_loaded', self.num_views)
             self.db_file = os.path.join(self.dataset_root, self.db_file)
             info = {
                 'sequence_list': self.sequence_list,
@@ -306,7 +323,7 @@ class Panoptic(JointsDataset):
                 'cam_list': self.cam_list,
                 'db': self.db
             }
-            print(f"save_voxel_pred to {self.db_file}")
+            print(f"load save_voxel_pred to {self.db_file}")
             pickle.dump(info, open(self.db_file, 'wb'))
 
         return aps, recs, self._eval_list_to_mpjpe(eval_list), self._eval_list_to_recall(eval_list, total_gt)
