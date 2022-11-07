@@ -15,5 +15,6 @@
             ],
             "justMyCode": true
         }
+        // python test/evaluate.py --cfg configs/panoptic/resnet50/save_voxel_pred.yaml
     ]
 }
