@@ -111,6 +111,7 @@ config.DATASET.DATA_AUGMENTATION = True
 config.DATASET.CAMERA_NUM = 5
 config.DATASET.CAM_SEQ = 'seq5'
 config.DATASET.SAVE_RESULT = None
+config.DATASET.DATA_SEQ = 'seq0'
 
 # training data augmentation
 config.DATASET.SCALE_FACTOR = 0

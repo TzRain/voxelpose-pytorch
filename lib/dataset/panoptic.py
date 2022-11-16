@@ -35,6 +35,21 @@ TRAIN_LIST = [
     '160906_band2',
     '160906_band3',
 ]
+TRAIN_SEQ = {
+    'seq0': TRAIN_LIST,
+    'seq1': [
+        '160422_ultimatum1',
+        '160224_haggling1',
+        '160226_haggling1',
+        '161202_haggling1',
+        '160906_ian1',
+        '160906_ian2',
+        '160906_ian3',
+        '160906_band1',
+        '160906_band2',
+    ]
+}
+
 VAL_LIST = ['160906_pizza1', '160422_haggling1', '160906_ian5', '160906_band4']
 
 JOINTS_DEF = {
@@ -98,9 +113,10 @@ class Panoptic(JointsDataset):
         self.num_joints = len(JOINTS_DEF)
         self.save_result = not(cfg.DATASET.SAVE_RESULT is None)
         self.save_suffix = cfg.DATASET.SAVE_RESULT
+        self.data_seq = cfg.DATASET.DATA_SEQ
         self.cam_seq = cfg.DATASET.CAM_SEQ
         if self.image_set == 'train':
-            self.sequence_list = TRAIN_LIST
+            self.sequence_list = TRAIN_SEQ[self.data_seq]
             self._interval = 3
             self.cam_list = CAM_LIST[self.cam_seq][:self.num_views]
             # self.cam_list = list(set([(0, n) for n in range(0, 31)]) - {(0, 12), (0, 6), (0, 23), (0, 13), (0, 3)})
