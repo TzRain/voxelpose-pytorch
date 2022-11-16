@@ -6,7 +6,6 @@ BACKBONE_MODEL: 'pose_resnet'
 MODEL: 'multi_person_posenet'
 DATA_DIR: ''
 GPUS: '0,1'
-# GPUS: '0,1,2,3,4,5,6,7'
 OUTPUT_DIR: 'output'
 LOG_DIR: 'log'
 WORKERS: 4
@@ -26,6 +25,7 @@ DATASET:
   TRAIN_SUBSET: 'train'
   ROOTIDX: 2
   CAMERA_NUM: 5
+  SAVE_RESULT: 'voxel_32_pred'
 NETWORK:
   PRETRAINED_BACKBONE: "models/pose_resnet50_panoptic.pth.tar"
   PRETRAINED:  ''  # 'models/pytorch/imagenet/resnet50-19c8e357.pth'
@@ -55,7 +55,7 @@ POSE_RESNET:
 LOSS:
   USE_TARGET_WEIGHT: true
 TRAIN:
-  BATCH_SIZE: 1
+  BATCH_SIZE: 2
   SHUFFLE: true
   BEGIN_EPOCH: 0
   END_EPOCH: 10
@@ -63,7 +63,7 @@ TRAIN:
   OPTIMIZER: adam
   LR: 0.0001
 TEST:
-  MODEL_FILE: 'model_best.pth.tar'
+  MODEL_FILE: '../voxel_g8_b1_32/model_best.pth.tar'
   BATCH_SIZE: 4
 DEBUG:
   DEBUG: false
@@ -81,9 +81,9 @@ MULTI_PERSON:
     - -500.0 # -600.0
     - 800.0
   INITIAL_CUBE_SIZE:
-    - 80
-    - 80
-    - 20
+    - 48
+    - 48
+    - 12
   MAX_PEOPLE_NUM: 10
   THRESHOLD: 0.3
 PICT_STRUCT:
@@ -92,6 +92,6 @@ PICT_STRUCT:
     - 2000.0
     - 2000.0
   CUBE_SIZE:
-    - 64
-    - 64
-    - 64
+    - 32
+    - 32
+    - 32

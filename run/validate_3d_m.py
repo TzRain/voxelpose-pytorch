@@ -7,22 +7,27 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import numpy as np
 import torch
+import torch.nn as nn
+import torch.optim as optim
 import torch.backends.cudnn as cudnn
 import torch.utils.data
 import torch.utils.data.distributed
 import torchvision.transforms as transforms
+from tensorboardX import SummaryWriter
 import argparse
 import os
-from tqdm import tqdm
-from prettytable import PrettyTable
-import copy
+import pprint
+import logging
+import json
 
 import _init_paths
 from core.config import config
 from core.config import update_config
-from utils.utils import create_logger, load_backbone_panoptic
+from core.function import train_3d, validate_3d
+from utils.utils import create_logger
+from utils.utils import save_checkpoint, load_checkpoint, load_model_state
+from utils.utils import load_backbone_panoptic
 import dataset
 import models
 
@@ -41,11 +46,13 @@ def parse_args():
 def main():
     args = parse_args()
     logger, final_output_dir, tb_log_dir = create_logger(
-        config, args.cfg, 'eval_map')
-    cfg_name = os.path.basename(args.cfg).split('.')[0]
+        config, args.cfg, 'validate')
+
+    logger.info(pprint.pformat(args))
+    logger.info(pprint.pformat(config))
 
     gpus = [int(i) for i in config.GPUS.split(',')]
-    logger.info('=> Loading data ..')
+    print('=> Loading data ..')
     normalize = transforms.Normalize(
         mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 
@@ -67,7 +74,7 @@ def main():
     torch.backends.cudnn.deterministic = config.CUDNN.DETERMINISTIC
     torch.backends.cudnn.enabled = config.CUDNN.ENABLED
 
-    logger.info('=> Constructing models ..')
+    print('=> Constructing models ..')
     model = eval('models.' + config.MODEL + '.get_multi_person_pose_net')(
         config, is_train=True)
     with torch.no_grad():
@@ -80,36 +87,8 @@ def main():
     else:
         raise ValueError('Check the model file for testing!')
 
-    model.eval()
-    preds = []
-    with torch.no_grad():
-        for i, (inputs, targets_2d, weights_2d, targets_3d, meta, input_heatmap) in enumerate(tqdm(test_loader)):
-            if 'panoptic' in config.DATASET.TEST_DATASET:
-                pred, _, _, _, _, _ = model(views=inputs, meta=meta)
-            elif 'campus' in config.DATASET.TEST_DATASET or 'shelf' in config.DATASET.TEST_DATASET:
-                pred, _, _, _, _, _ = model(meta=meta, input_heatmaps=input_heatmap)
-
-            pred = pred.detach().cpu().numpy()
-            for b in range(pred.shape[0]):
-                preds.append(pred[b])
-
-        tb = PrettyTable()
-        if 'panoptic' in config.DATASET.TEST_DATASET:
-            mpjpe_threshold = np.arange(25, 155, 25)
-            aps, recs, mpjpe, _ = test_dataset.evaluate(preds)
-            tb.field_names = ['Threshold/mm'] + [f'{i}' for i in mpjpe_threshold]
-            tb.add_row(['AP'] + [f'{ap * 100:.2f}' for ap in aps])
-            tb.add_row(['Recall'] + [f'{re * 100:.2f}' for re in recs])
-            logger.info(tb)
-            logger.info(f'MPJPE: {mpjpe:.2f}mm')
-        else:
-            actor_pcp, avg_pcp, bone_person_pcp, _ = test_dataset.evaluate(preds)
-            tb.field_names = ['Bone Group'] + [f'Actor {i+1}' for i in range(len(actor_pcp))] + ['Average']
-            for k, v in bone_person_pcp.items():
-                tb.add_row([k] + [f'{i*100:.1f}' for i in v] + [f'{np.mean(v)*100:.1f}'])
-            tb.add_row(['Total'] + [f'{i*100:.1f}' for i in actor_pcp] + [f'{avg_pcp*100:.1f}'])
-            logger.info(tb)
+    validate_3d(config, model, test_loader, final_output_dir)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

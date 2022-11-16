@@ -74,6 +74,20 @@ LIMBS = [[0, 1],
          [12, 13],
          [13, 14]]
 
+CAM_LIST={
+    'seq5' : [(0, 12), (0, 6), (0, 23), (0, 13), (0, 3)],
+    'seq0' : [(0, 21), (0, 17), (0, 4), (0, 19), (0, 5)],
+    'seq1-1' : [(0, 13), (0, 17), (0, 4), (0, 19), (0, 5)],
+    'seq1-2': [(0, 6), (0, 17), (0, 4), (0, 19), (0, 5)],
+    'seq2-1' : [(0, 13), (0, 23), (0, 4), (0, 19), (0, 5)],
+    'seq2-2': [(0, 6), (0, 17), (0, 4), (0, 23), (0, 5)],
+    'seq3-1': [(0, 6), (0, 17), (0, 4), (0, 23), (0, 5)],
+    'seq3-2': [(0, 6), (0, 17), (0, 4), (0, 23), (0, 5)],
+    'seq4-1': [(0, 19), (0, 17), (0, 23), (0, 13), (0, 3)],
+    'seq4-2': [(0, 12), (0, 6), (0, 4), (0, 5), (0, 3)],
+    'seq4-1': [(0, 12), (0, 17), (0, 23), (0, 13), (0, 3)],
+    'seq4-2': [(0, 12), (0, 6), (0, 9), (0, 13), (0, 3)],
+}
 
 class Panoptic(JointsDataset):
     def __init__(self, cfg, image_set, is_train, transform=None):
@@ -82,42 +96,25 @@ class Panoptic(JointsDataset):
         self.joints_def = JOINTS_DEF
         self.limbs = LIMBS
         self.num_joints = len(JOINTS_DEF)
-
+        self.save_result = not(cfg.DATASET.SAVE_RESULT is None)
+        self.save_suffix = cfg.DATASET.SAVE_RESULT
+        self.cam_seq = cfg.DATASET.CAM_SEQ
         if self.image_set == 'train':
             self.sequence_list = TRAIN_LIST
             self._interval = 3
-            self.cam_list = [(0, 12), (0, 6), (0, 23), (0, 13), (0, 3)][:self.num_views]
+            self.cam_list = CAM_LIST[self.cam_seq][:self.num_views]
             # self.cam_list = list(set([(0, n) for n in range(0, 31)]) - {(0, 12), (0, 6), (0, 23), (0, 13), (0, 3)})
             # self.cam_list.sort()
             self.num_views = len(self.cam_list)
         elif self.image_set == 'validation':
             self.sequence_list = VAL_LIST
             self._interval = 12
-            self.cam_list = [(0, 12), (0, 6), (0, 23), (0, 13), (0, 3)][:self.num_views]
-            self.num_views = len(self.cam_list)
-        elif self.image_set == 'save_voxel_pred':
-            self.sequence_list = TRAIN_LIST[:-1]
-            self._interval = 3
-            self.cam_list = [(0, 12), (0, 6), (0, 23), (0, 13), (0, 3)][:self.num_views]
-            self.num_views = len(self.cam_list)
-        elif self.image_set == 'save_voxel_pred_loaded':
-            self.sequence_list = TRAIN_LIST[:-1]
-            self._interval = 3
-            self.cam_list = [(0, 12), (0, 6), (0, 23), (0, 13), (0, 3)][:self.num_views]
-            self.num_views = len(self.cam_list)
-        elif self.image_set == 'validation_save_voxel_pred':
-            self.sequence_list = VAL_LIST
-            self._interval = 12
-            self.cam_list = [(0, 12), (0, 6), (0, 23), (0, 13), (0, 3)][:self.num_views]
-            self.num_views = len(self.cam_list)
-        elif self.image_set == 'validation_save_voxel_pred_loaded':
-            self.sequence_list = VAL_LIST
-            self._interval = 12
-            self.cam_list = [(0, 12), (0, 6), (0, 23), (0, 13), (0, 3)][:self.num_views]
+            self.cam_list = CAM_LIST[self.cam_seq][:self.num_views]
             self.num_views = len(self.cam_list)
             
 
-        self.db_file = 'group_{}_cam{}.pkl'.format(self.image_set, self.num_views)
+        self.db_file = 'group_{}_cam{}_{}.pkl'.\
+            format(self.image_set, self.cam_seq, self.num_views)
         self.db_file = os.path.join(self.dataset_root, self.db_file)
 
         if osp.exists(self.db_file):
@@ -341,7 +338,7 @@ class Panoptic(JointsDataset):
             pred = preds[i].copy()
             
 
-            if self.image_set == 'save_voxel_pred' or self.image_set == 'validation_save_voxel_pred':
+            if self.save_result:
                 self.db[index]['joints_3d_voxelpose_pred'] = pred
                 
             pred = pred[pred[:, 0, 3] >= 0]
@@ -371,8 +368,8 @@ class Panoptic(JointsDataset):
             aps.append(ap)
             recs.append(rec)
         
-        if self.image_set == 'save_voxel_pred' or self.image_set == 'validation_save_voxel_pred':
-            self.db_file = 'group_{}_cam{}.pkl'.format(f'{self.image_set}_loaded', self.num_views)
+        if self.save_result:
+            self.db_file = 'group_{}_cam{}_{}_{}.pkl'.format(self.image_set, self.cam_seq ,self.num_views, self.save_suffix)
             self.db_file = os.path.join(self.dataset_root, self.db_file)
             info = {
                 'sequence_list': self.sequence_list,
