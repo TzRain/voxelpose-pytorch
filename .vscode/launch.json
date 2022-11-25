@@ -11,7 +11,9 @@
             "program": "test/evaluate.py",
             "console": "integratedTerminal",
             "args": [
-                "--cfg","configs/panoptic/resnet50/save_voxel_pred.yaml"
+                "--cfg",
+                // "configs/panoptic/resnet50/save_voxel_pred.yaml"
+                "configs/panoptic/resnet50/voxel_g2_b1_64_detail.yaml"
             ],
             "justMyCode": true
         }
