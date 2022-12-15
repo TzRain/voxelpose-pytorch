@@ -5,6 +5,7 @@
 
 import math
 import numpy as np
+import torch
 import torchvision
 import cv2
 import os
@@ -13,6 +14,87 @@ matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
+def save_ref_points_with_gt(preds, meta, file_name, color=None, transparency=1, range_in=None,
+    indices=None):
+    batch_size = len(preds)
+    joints_num = 15
+
+    if isinstance(preds, torch.Tensor):
+        preds = preds.view(batch_size,-1,joints_num,3)
+    else:
+        preds = [pred.view(-1,joints_num,3) for pred in preds]
+
+    if indices is not None:
+        # select some !  # indices: batchsize, preds_ids, gt_ids
+        valid_pred_ids = [ind[0].to(preds.device) for ind in indices]
+        preds_valid = []
+        for i in range(batch_size):
+            pred_i = preds[i][valid_pred_ids[i]]
+            preds_valid.append(pred_i)
+        preds = preds_valid
+
+    # batch_size = meta['num_person'].shape[0]
+    xplot = min(4, batch_size)
+    yplot = int(math.ceil(float(batch_size) / xplot))
+
+    width = 4.0 * xplot
+    height = 4.0 * yplot
+    fig = plt.figure(0, figsize=(width, height))
+    plt.subplots_adjust(left=0.05, right=0.95, bottom=0.05,
+                        top=0.95, wspace=0.05, hspace=0.15)
+    for i in range(batch_size):
+        num_person = meta['num_person'][i]
+        joints_3d = meta['joints_3d'][i]
+        joints_3d_vis = meta['joints_3d_vis'][i]
+        ax = plt.subplot(yplot, xplot, i + 1, projection='3d')
+        for n in range(num_person):
+            ## plot groundtruth
+            joint = joints_3d[n]
+            joint_vis = joints_3d_vis[n]
+            for k in eval("LIMBS{}".format(len(joint))):
+                if joint_vis[k[0], 0] and joint_vis[k[1], 0]:
+                    x = [float(joint[k[0], 0]), float(joint[k[1], 0])]
+                    y = [float(joint[k[0], 1]), float(joint[k[1], 1])]
+                    z = [float(joint[k[0], 2]), float(joint[k[1], 2])]
+                    ax.plot(x, y, z, c='r', lw=2, marker='o',
+                            markerfacecolor='w', markersize=2,
+                            markeredgewidth=1)
+                else:
+                    x = [float(joint[k[0], 0]), float(joint[k[1], 0])]
+                    y = [float(joint[k[0], 1]), float(joint[k[1], 1])]
+                    z = [float(joint[k[0], 2]), float(joint[k[1], 2])]
+                    ax.plot(x, y, z, c='r', ls='--', lw=2,
+                            marker='o', markerfacecolor='w', markersize=2,
+                            markeredgewidth=1)
+
+        colors = ['b', 'g', 'c', 'y', 'm', 'orange',
+                  'pink', 'royalblue', 'lightgreen', 'gold']
+        if color is not None:
+            for ic in range(len(colors)):
+                colors[ic] = color
+        if preds is not None:
+            pred = preds[i]
+            ###################
+            # pred = preds
+            for n in range(len(pred)):
+                joint = pred[n]
+                for k in eval("LIMBS{}".format(len(joint))):
+                    x = [float(joint[k[0], 0]), float(joint[k[1], 0])]
+                    y = [float(joint[k[0], 1]), float(joint[k[1], 1])]
+                    z = [float(joint[k[0], 2]), float(joint[k[1], 2])]
+                    ax.plot(x, y, z, c=colors[int(n % 10)],
+                            lw=1.5, marker='o',
+                            markerfacecolor='w', markersize=2,
+                            markeredgewidth=1,
+                            alpha=transparency)
+    
+    if range_in is not None:
+        ax.set_xlim(range_in[0,:])
+        ax.set_ylim(range_in[1,:])
+        ax.set_zlim(range_in[2,:])
+
+    plt.savefig(file_name)
+    plt.close(0)
 
 def save_batch_image_with_joints_multi(batch_image,
                                  batch_joints,

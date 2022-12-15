@@ -20,6 +20,7 @@ from prettytable import PrettyTable
 import copy
 
 import _init_paths
+from datetime import datetime
 from core.config import config
 from core.config import update_config
 from utils.utils import create_logger, load_backbone_panoptic
@@ -82,16 +83,29 @@ def main():
 
     model.eval()
     preds = []
+    now = datetime.now()
+    now_str = now.strftime("%Y%m%d-%H%M%S")
     with torch.no_grad():
-        for i, (inputs, targets_2d, weights_2d, targets_3d, meta, input_heatmap) in enumerate(tqdm(test_loader)):
-            if 'panoptic' in config.DATASET.TEST_DATASET:
-                pred, _, _, _, _, _ = model(views=inputs, meta=meta)
-            elif 'campus' in config.DATASET.TEST_DATASET or 'shelf' in config.DATASET.TEST_DATASET:
-                pred, _, _, _, _, _ = model(meta=meta, input_heatmaps=input_heatmap)
+        pred_path = os.path.join(final_output_dir, f"{config.TEST.PRED_FILE}.npy")
 
-            pred = pred.detach().cpu().numpy()
-            for b in range(pred.shape[0]):
-                preds.append(pred[b])
+        if config.TEST.PRED_FILE and os.path.isfile(pred_path):
+            preds = np.load(pred_path)
+            logger.info(f"=> load pred_file from {pred_path}")
+        
+        else:
+
+            for i, (inputs, targets_2d, weights_2d, targets_3d, meta, input_heatmap) in enumerate(tqdm(test_loader)):
+                if 'panoptic' in config.DATASET.TEST_DATASET:
+                    pred, _, _, _, _, _ = model(views=inputs, meta=meta)
+                elif 'campus' in config.DATASET.TEST_DATASET or 'shelf' in config.DATASET.TEST_DATASET:
+                    pred, _, _, _, _, _ = model(meta=meta, input_heatmaps=input_heatmap)
+
+                pred = pred.detach().cpu().numpy()
+                for b in range(pred.shape[0]):
+                    preds.append(pred[b])
+            
+            np.save(final_output_dir+'/{}.npy'.format(now_str),preds)
+            logger.info(f"=> save pred_file with TEST.PRED_FILE={now_str}")
 
         tb = PrettyTable()
         if 'panoptic' in config.DATASET.TEST_DATASET:

@@ -109,7 +109,8 @@ config.DATASET.COLOR_RGB = False
 config.DATASET.FLIP = True
 config.DATASET.DATA_AUGMENTATION = True
 config.DATASET.CAMERA_NUM = 5
-config.DATASET.CAM_SEQ = 'seq5'
+config.DATASET.TRAIN_CAM_SEQ = 'CMU0'
+config.DATASET.TEST_CAM_SEQ = 'CMU0'
 config.DATASET.SAVE_RESULT = None
 config.DATASET.DATA_SEQ = 'seq0'
 config.DATASET.CAMERA_DETAIL = False
@@ -158,7 +159,7 @@ config.TEST.DETECTOR = 'fpn_dcn'
 config.TEST.DETECTOR_DIR = ''
 config.TEST.MODEL_FILE = ''
 config.TEST.HEATMAP_LOCATION_FILE = 'predicted_heatmaps.h5'
-
+config.TEST.PRED_FILE = None
 # debug
 config.DEBUG = edict()
 config.DEBUG.DEBUG = True
