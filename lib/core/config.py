@@ -13,6 +13,8 @@ import yaml
 import numpy as np
 from easydict import EasyDict as edict
 
+from utils.string_parser import parse_string_to_keyvalue
+
 config = edict()
 
 config.OUTPUT_DIR = 'output'
@@ -167,6 +169,8 @@ config.DEBUG.SAVE_BATCH_IMAGES_GT = True
 config.DEBUG.SAVE_BATCH_IMAGES_PRED = True
 config.DEBUG.SAVE_HEATMAPS_GT = True
 config.DEBUG.SAVE_HEATMAPS_PRED = True
+config.DEBUG.WANDB_KEY = ''
+config.DEBUG.WANDB_NAME = ''
 
 # pictorial structure
 config.PICT_STRUCT = edict()
@@ -233,6 +237,23 @@ def update_config(config_file):
                         config[k] = v
             else:
                 raise ValueError("{} not exist in config.py".format(k))
+
+def update_config_dynamic_input(args):
+    key_value_items = parse_string_to_keyvalue(args)
+    for item in key_value_items:
+        for k in item:
+            v = item[k]
+            if k in config:
+                if isinstance(v, dict):
+                    _update_dict(k, v)
+                else:
+                    if k == 'SCALES':
+                        config[k][0] = (tuple(v))
+                    else:
+                        config[k] = v
+            else:
+                print("{} not exist in config.py".format(k))
+                # raise ValueError("{} not exist in config.py".format(k))
 
 
 def gen_config(config_file):

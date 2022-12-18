@@ -16,6 +16,7 @@ from utils.vis import save_debug_3d_cubes
 
 logger = logging.getLogger(__name__)
 
+import wandb
 
 def train_3d(config, model, optimizer, loader, epoch, output_dir, writer_dict, device=torch.device('cuda'), dtype=torch.float):
     batch_time = AverageMeter()

@@ -136,3 +136,4 @@ dmypy.json
 /log
 /log_back
 /output_back
+wandb/

@@ -11,3 +11,4 @@ matplotlib
 easydict==1.9
 PyYAML==5.4
 tensorboardX==2.1
+wandb

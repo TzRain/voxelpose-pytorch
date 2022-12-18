@@ -22,10 +22,12 @@ import copy
 import _init_paths
 from datetime import datetime
 from core.config import config
-from core.config import update_config
+from core.config import update_config, update_config_dynamic_input
 from utils.utils import create_logger, load_backbone_panoptic
 import dataset
+import pprint
 import models
+import wandb
 
 
 def parse_args():
@@ -35,7 +37,7 @@ def parse_args():
 
     args, rest = parser.parse_known_args()
     update_config(args.cfg)
-
+    update_config_dynamic_input(rest)
     return args
 
 
@@ -44,6 +46,14 @@ def main():
     logger, final_output_dir, tb_log_dir = create_logger(
         config, args.cfg, 'eval_map')
     cfg_name = os.path.basename(args.cfg).split('.')[0]
+    logger.info(pprint.pformat(args))
+    logger.info(pprint.pformat(config))
+    if config.DEBUG.WANDB_KEY:
+        wandb.login(key=config.DEBUG.WANDB_KEY)
+    if config.DEBUG.WANDB_NAME:
+        wandb.init(project="vp-val",name=config.DEBUG.WANDB_NAME)
+    else:
+        wandb.init(project="vp-val")
 
     gpus = [int(i) for i in config.GPUS.split(',')]
     logger.info('=> Loading data ..')

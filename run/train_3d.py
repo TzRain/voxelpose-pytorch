@@ -14,7 +14,7 @@ import torch.backends.cudnn as cudnn
 import torch.utils.data
 import torch.utils.data.distributed
 import torchvision.transforms as transforms
-from tensorboardX import SummaryWriter
+# from tensorboardX import SummaryWriter
 import argparse
 import os
 import pprint
@@ -23,13 +23,15 @@ import json
 
 import _init_paths
 from core.config import config
-from core.config import update_config
+from core.config import update_config, update_config_dynamic_input
 from core.function import train_3d, validate_3d
 from utils.utils import create_logger
 from utils.utils import save_checkpoint, load_checkpoint, load_model_state
 from utils.utils import load_backbone_panoptic
 import dataset
 import models
+
+import wandb
 
 
 def parse_args():
@@ -40,6 +42,7 @@ def parse_args():
     args, rest = parser.parse_known_args()
     update_config(args.cfg)
 
+    update_config_dynamic_input(rest)
     return args
 
 
@@ -65,6 +68,12 @@ def main():
 
     logger.info(pprint.pformat(args))
     logger.info(pprint.pformat(config))
+    if config.DEBUG.WANDB_KEY:
+        wandb.login(key=config.DEBUG.WANDB_KEY)
+    if config.DEBUG.WANDB_NAME:
+        wandb.init(project="vp-train",name=config.DEBUG.WANDB_NAME)
+    else:
+        wandb.init(project="vp-train")
 
     gpus = [int(i) for i in config.GPUS.split(',')]
     print('=> Loading data ..')
