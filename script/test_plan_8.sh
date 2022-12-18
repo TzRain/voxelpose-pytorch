@@ -1,7 +1,13 @@
 #! /bin/bash -x
 
-python test/evaluate.py --cfg configs/panoptic/resnet50/std64.yaml GPUS='0,1,2,3,4,5,6,7' DATASET.TRAIN_CAM_SEQ='CMU1' DATASET.TEST_CAM_SEQ='CMU1' DATASET.CAMERA_NUM=0 DATASET.SAVE_RESULT='voxel_64_pred' DEBUG.WANDB_NAME='std64(CM0) CMU1'
-python test/evaluate.py --cfg configs/panoptic/resnet50/std64.yaml GPUS='0,1,2,3,4,5,6,7' DATASET.TRAIN_CAM_SEQ='CMU2' DATASET.TEST_CAM_SEQ='CMU2' DATASET.CAMERA_NUM=0 DATASET.SAVE_RESULT='voxel_64_pred' DEBUG.WANDB_NAME='std64(CM0) CMU2'
-python test/evaluate.py --cfg configs/panoptic/resnet50/std64.yaml GPUS='0,1,2,3,4,5,6,7' DATASET.TRAIN_CAM_SEQ='CMU3' DATASET.TEST_CAM_SEQ='CMU3' DATASET.CAMERA_NUM=0 DATASET.SAVE_RESULT='voxel_64_pred' DEBUG.WANDB_NAME='std64(CM0) CMU3'
-python test/evaluate.py --cfg configs/panoptic/resnet50/std64.yaml GPUS='0,1,2,3,4,5,6,7' DATASET.TRAIN_CAM_SEQ='CMU4' DATASET.TEST_CAM_SEQ='CMU4' DATASET.CAMERA_NUM=0 DATASET.SAVE_RESULT='voxel_64_pred' DEBUG.WANDB_NAME='std64(CM0) CMU4'
-python test/evaluate.py --cfg configs/panoptic/resnet50/std64.yaml GPUS='0,1,2,3,4,5,6,7' DATASET.TRAIN_CAM_SEQ='CMU0' DATASET.TEST_CAM_SEQ='CMU0' DATASET.CAMERA_NUM=0 DATASET.SAVE_RESULT='voxel_64_pred' DEBUG.WANDB_NAME='std64(CM0) CMU0'
+python test/evaluate.py --cfg configs/panoptic/resnet50/std64.yaml GPUS='0,1,2,3,4,5,6,7' DATASET.TRAIN_CAM_SEQ='CMU1' DATASET.TEST_CAM_SEQ='CMU1' DATASET.CAMERA_NUM=0 DATASET.SAVE_RESULT='voxel_64_pred-12-18' DEBUG.WANDB_NAME='std64(CM0) CMU1'
+python test/evaluate.py --cfg configs/panoptic/resnet50/std64.yaml GPUS='0,1,2,3,4,5,6,7' DATASET.TRAIN_CAM_SEQ='CMU2' DATASET.TEST_CAM_SEQ='CMU2' DATASET.CAMERA_NUM=0 DATASET.SAVE_RESULT='voxel_64_pred-12-18' DEBUG.WANDB_NAME='std64(CM0) CMU2'
+python test/evaluate.py --cfg configs/panoptic/resnet50/std64.yaml GPUS='0,1,2,3,4,5,6,7' DATASET.TRAIN_CAM_SEQ='CMU3' DATASET.TEST_CAM_SEQ='CMU3' DATASET.CAMERA_NUM=0 DATASET.SAVE_RESULT='voxel_64_pred-12-18' DEBUG.WANDB_NAME='std64(CM0) CMU3'
+python test/evaluate.py --cfg configs/panoptic/resnet50/std64.yaml GPUS='0,1,2,3,4,5,6,7' DATASET.TRAIN_CAM_SEQ='CMU4' DATASET.TEST_CAM_SEQ='CMU4' DATASET.CAMERA_NUM=0 DATASET.SAVE_RESULT='voxel_64_pred-12-18' DEBUG.WANDB_NAME='std64(CM0) CMU4'
+python test/evaluate.py --cfg configs/panoptic/resnet50/std64.yaml GPUS='0,1,2,3,4,5,6,7' DATASET.TRAIN_CAM_SEQ='CMU0' DATASET.TEST_CAM_SEQ='CMU0' DATASET.CAMERA_NUM=0 DATASET.SAVE_RESULT='voxel_64_pred-12-18' DEBUG.WANDB_NAME='std64(CM0) CMU0'
+
+python test/evaluate.py --cfg configs/panoptic/resnet50/std32.yaml GPUS='0,1,2,3,4,5,6,7' DATASET.TRAIN_CAM_SEQ='CMU1' DATASET.TEST_CAM_SEQ='CMU1' DATASET.CAMERA_NUM=0 DATASET.SAVE_RESULT='voxel_32_pred-12-18' DEBUG.WANDB_NAME='std32(CM0) CMU1'
+python test/evaluate.py --cfg configs/panoptic/resnet50/std32.yaml GPUS='0,1,2,3,4,5,6,7' DATASET.TRAIN_CAM_SEQ='CMU2' DATASET.TEST_CAM_SEQ='CMU2' DATASET.CAMERA_NUM=0 DATASET.SAVE_RESULT='voxel_32_pred-12-18' DEBUG.WANDB_NAME='std32(CM0) CMU2'
+python test/evaluate.py --cfg configs/panoptic/resnet50/std32.yaml GPUS='0,1,2,3,4,5,6,7' DATASET.TRAIN_CAM_SEQ='CMU3' DATASET.TEST_CAM_SEQ='CMU3' DATASET.CAMERA_NUM=0 DATASET.SAVE_RESULT='voxel_32_pred-12-18' DEBUG.WANDB_NAME='std32(CM0) CMU3'
+python test/evaluate.py --cfg configs/panoptic/resnet50/std32.yaml GPUS='0,1,2,3,4,5,6,7' DATASET.TRAIN_CAM_SEQ='CMU4' DATASET.TEST_CAM_SEQ='CMU4' DATASET.CAMERA_NUM=0 DATASET.SAVE_RESULT='voxel_32_pred-12-18' DEBUG.WANDB_NAME='std32(CM0) CMU4'
+python test/evaluate.py --cfg configs/panoptic/resnet50/std32.yaml GPUS='0,1,2,3,4,5,6,7' DATASET.TRAIN_CAM_SEQ='CMU0' DATASET.TEST_CAM_SEQ='CMU0' DATASET.CAMERA_NUM=0 DATASET.SAVE_RESULT='voxel_32_pred-12-18' DEBUG.WANDB_NAME='std32(CM0) CMU0'
