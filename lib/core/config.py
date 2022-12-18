@@ -13,7 +13,7 @@ import yaml
 import numpy as np
 from easydict import EasyDict as edict
 
-from utils.string_parser import parse_string_to_keyvalue
+from lib.utils.string_parser import parse_string_to_keyvalue
 
 config = edict()
 

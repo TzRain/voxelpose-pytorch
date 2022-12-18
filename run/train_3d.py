@@ -14,7 +14,7 @@ import torch.backends.cudnn as cudnn
 import torch.utils.data
 import torch.utils.data.distributed
 import torchvision.transforms as transforms
-# from tensorboardX import SummaryWriter
+from tensorboardX import SummaryWriter
 import argparse
 import os
 import pprint

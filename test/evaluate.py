@@ -21,8 +21,7 @@ import copy
 
 import _init_paths
 from datetime import datetime
-from core.config import config
-from core.config import update_config, update_config_dynamic_input
+from core.config import config,update_config, update_config_dynamic_input
 from utils.utils import create_logger, load_backbone_panoptic
 import dataset
 import pprint
