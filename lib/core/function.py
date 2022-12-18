@@ -9,6 +9,8 @@ import copy
 
 import torch
 import numpy as np
+from prettytable import PrettyTable
+
 
 from utils.vis import save_debug_images_multi
 from utils.vis import save_debug_3d_images
@@ -155,15 +157,32 @@ def validate_3d(config, model, loader, output_dir):
                 save_debug_3d_images(config, meta[0], pred, prefix2)
 
     metric = None
+    # if 'panoptic' in config.DATASET.TEST_DATASET:
+    #     aps, _, mpjpe, recall = loader.dataset.evaluate(preds)
+    #     msg = 'ap@25: {aps_25:.4f}\tap@50: {aps_50:.4f}\tap@75: {aps_75:.4f}\t' \
+    #           'ap@100: {aps_100:.4f}\tap@125: {aps_125:.4f}\tap@150: {aps_150:.4f}\t' \
+    #           'recall@500mm: {recall:.4f}\tmpjpe@500mm: {mpjpe:.3f}'.format(
+    #             aps_25=aps[0], aps_50=aps[1], aps_75=aps[2], aps_100=aps[3],
+    #             aps_125=aps[4], aps_150=aps[5], recall=recall, mpjpe=mpjpe
+    #           )
+    #     logger.info(msg)
+    #     metric = np.mean(aps)
+    tb = PrettyTable()
     if 'panoptic' in config.DATASET.TEST_DATASET:
-        aps, _, mpjpe, recall = loader.dataset.evaluate(preds)
-        msg = 'ap@25: {aps_25:.4f}\tap@50: {aps_50:.4f}\tap@75: {aps_75:.4f}\t' \
-              'ap@100: {aps_100:.4f}\tap@125: {aps_125:.4f}\tap@150: {aps_150:.4f}\t' \
-              'recall@500mm: {recall:.4f}\tmpjpe@500mm: {mpjpe:.3f}'.format(
-                aps_25=aps[0], aps_50=aps[1], aps_75=aps[2], aps_100=aps[3],
-                aps_125=aps[4], aps_150=aps[5], recall=recall, mpjpe=mpjpe
-              )
-        logger.info(msg)
+        mpjpe_threshold = np.arange(25, 155, 25)
+        aps, recs, mpjpe, recall500 = loader.dataset.evaluate(preds)
+        tb.field_names = \
+            ["config_name"] + \
+            [f'AP{i}' for i in mpjpe_threshold] + \
+            [f'Recall{i}' for i in mpjpe_threshold] + \
+            ['Recall500','MPJPE']
+        tb.add_row( 
+            [config.DEBUG.WANDB_NAME] + 
+            [f'{ap * 100:.2f}' for ap in aps] +
+            [f'{re * 100:.2f}' for re in recs] +
+            [f'{recall500 * 100:.2f}',f'{mpjpe:.2f}']
+        )
+        logger.info(tb)
         metric = np.mean(aps)
     elif 'campus' in config.DATASET.TEST_DATASET or 'shelf' in config.DATASET.TEST_DATASET:
         actor_pcp, avg_pcp, _, recall = loader.dataset.evaluate(preds)
