@@ -140,13 +140,14 @@ def main():
 
         # lr_scheduler.step()
         train_3d(config, model, optimizer, train_loader, epoch, final_output_dir, writer_dict)
-        precision = validate_3d(config, model, test_loader, final_output_dir)
+        # precision = validate_3d(config, model, test_loader, final_output_dir)
 
-        if precision > best_precision:
-            best_precision = precision
-            best_model = True
-        else:
-            best_model = False
+        # if precision > best_precision:
+        #     best_precision = precision
+        #     best_model = True
+        # else:
+        #     best_model = False
+        best_model = True
 
         logger.info('=> saving checkpoint to {} (Best: {})'.format(final_output_dir, best_model))
         save_checkpoint({

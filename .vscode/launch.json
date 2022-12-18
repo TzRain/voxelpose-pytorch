@@ -13,10 +13,33 @@
             "args": [
                 "--cfg",
                 // "configs/panoptic/resnet50/save_voxel_pred.yaml"
-                "configs/panoptic/resnet50/voxel_g2_b1_64_detail.yaml"
+                // "configs/panoptic/resnet50/voxel_g2_b1_64_detail.yaml"
+                "configs/panoptic/resnet50/std64.yaml",
+                "GPUS=0,1",
+                "DATASET.TRAIN_CAM_SEQ=CMU3",
+                "DATASET.TEST_CAM_SEQ=CMU3",
+                "DATASET.CAMERA_NUM=0",
+            ],
+            "justMyCode": true
+        },
+        // python test/evaluate.py --cfg configs/panoptic/resnet50/save_voxel_pred.yaml
+        {
+            "name": "TRAIN",
+            "type": "python",
+            "request": "launch",
+            "program": "run/train_3d.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--cfg",
+                // "configs/panoptic/resnet50/save_voxel_pred.yaml"
+                // "configs/panoptic/resnet50/voxel_g2_b1_64_detail.yaml"
+                "configs/panoptic/resnet50/std64.yaml",
+                "GPUS=0,1",
+                "DATASET.TRAIN_CAM_SEQ=CMU3",
+                "DATASET.TEST_CAM_SEQ=CMU3",
+                "DATASET.CAMERA_NUM=0",
             ],
             "justMyCode": true
         }
-        // python test/evaluate.py --cfg configs/panoptic/resnet50/save_voxel_pred.yaml
     ]
 }
