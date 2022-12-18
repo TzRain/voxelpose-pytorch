@@ -115,18 +115,24 @@ class Panoptic(JointsDataset):
         self.show_camera_detail = cfg.DATASET.CAMERA_DETAIL
         self.cam_seq = self.test_cam_seq if self.image_set == 'validation' else self.train_cam_seq
         if self.image_set == 'train':
-            self.sequence_list = TRAIN_SEQ[self.data_seq]
+            self.sequence_list = TRAIN_SEQ['seq1'] #! fix for only seq1
             self._interval = 3
-            self.cam_list = CAM_LIST[self.cam_seq][:self.num_views]
-            # self.cam_list = list(set([(0, n) for n in range(0, 31)]) - {(0, 12), (0, 6), (0, 23), (0, 13), (0, 3)})
-            # self.cam_list.sort()
-            self.num_views = len(self.cam_list)
+            if self.num_views:
+                self.cam_list = CAM_LIST[self.cam_seq][:self.num_views]
+                self.num_views = len(self.cam_list)
+            else:
+                self.cam_list = CAM_LIST[self.cam_seq]
+                self.num_views = len(self.cam_list)
+
         elif self.image_set == 'validation':
             self.sequence_list = VAL_LIST
             self._interval = 12
-            self.cam_list = CAM_LIST[self.cam_seq][:self.num_views]
-            self.num_views = len(self.cam_list)
-            
+            if self.num_views:
+                self.cam_list = CAM_LIST[self.cam_seq][:self.num_views]
+                self.num_views = len(self.cam_list)
+            else:
+                self.cam_list = CAM_LIST[self.cam_seq]
+                self.num_views = len(self.cam_list)
 
         self.db_file = 'group_{}_cam{}_{}.pkl'.\
             format(self.image_set, self.cam_seq, self.num_views)

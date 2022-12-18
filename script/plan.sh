@@ -29,4 +29,6 @@ python run/train_3d.py --cfg configs/panoptic/resnet50/voxel_g8_b1.yaml GPUS='0,
 
 
 
-python run/train_3d.py --cfg configs/panoptic/resnet50/std32.yaml 
+
+
+python test/evaluate.py --cfg configs/panoptic/resnet50/std64.yaml GPUS='0,1' DATASET.TRAIN_CAM_SEQ='CMU1' DATASET.TEST_CAM_SEQ='CMU1' DATASET.CAMERA_NUM=0 DATASET.SAVE_RESULT='voxel_64_pred'

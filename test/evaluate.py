@@ -120,12 +120,19 @@ def main():
         tb = PrettyTable()
         if 'panoptic' in config.DATASET.TEST_DATASET:
             mpjpe_threshold = np.arange(25, 155, 25)
-            aps, recs, mpjpe, _ = test_dataset.evaluate(preds)
-            tb.field_names = ['Threshold/mm'] + [f'{i}' for i in mpjpe_threshold]
-            tb.add_row(['AP'] + [f'{ap * 100:.2f}' for ap in aps])
-            tb.add_row(['Recall'] + [f'{re * 100:.2f}' for re in recs])
+            aps, recs, mpjpe, recall500 = test_dataset.evaluate(preds)
+            tb.field_names = \
+                ["config_name"] + \
+                [f'AP{i}' for i in mpjpe_threshold] + \
+                [f'Recall{i}' for i in mpjpe_threshold] + \
+                ['Recall500','MPJPE']
+            tb.add_row( 
+                [config.DEBUG.WANDB_NAME] + 
+                [f'{ap * 100:.2f}' for ap in aps] +
+                [f'{re * 100:.2f}' for re in recs] +
+                [f'{recall500 * 100:.2f}',f'{mpjpe:.2f}']
+            )
             logger.info(tb)
-            logger.info(f'MPJPE: {mpjpe:.2f}mm')
         else:
             actor_pcp, avg_pcp, bone_person_pcp, _ = test_dataset.evaluate(preds)
             tb.field_names = ['Bone Group'] + [f'Actor {i+1}' for i in range(len(actor_pcp))] + ['Average']
