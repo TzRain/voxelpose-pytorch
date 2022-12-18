@@ -147,7 +147,7 @@ def main():
         #     best_model = True
         # else:
         #     best_model = False
-        best_model = False
+        best_model = True
 
         logger.info('=> saving checkpoint to {} (Best: {})'.format(final_output_dir, best_model))
         save_checkpoint({
