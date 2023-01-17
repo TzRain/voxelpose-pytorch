@@ -5,6 +5,25 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "TEST",
+            "type": "python",
+            "request": "launch",
+            "program": "test/evaluate.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--cfg",
+                // "configs/panoptic/resnet50/save_voxel_pred.yaml"
+                // "configs/panoptic/resnet50/voxel_g2_b1_64_detail.yaml"
+                "configs/panoptic/resnet50/std64.yaml",
+                "GPUS=0,1",
+                "DATASET.TRAIN_CAM_SEQ=CMU3",
+                "DATASET.TEST_CAM_SEQ=CMU3",
+                "DATASET.CAMERA_NUM=4",
+                "DEBUG.WANDB_NAME='std64 CMU3'",
+            ],
+            "justMyCode": true
+        },
+        {
             "name": "save_voxel_pred",
             "type": "python",
             "request": "launch",
