@@ -52,7 +52,7 @@
                 "--cfg",
                 // "configs/panoptic/resnet50/save_voxel_pred.yaml"
                 // "configs/panoptic/resnet50/voxel_g2_b1_64_detail.yaml"
-                "configs/panoptic/resnet50/std64.yaml",
+                "configs/panoptic/resnet50/multi-cam/std32_CMU4-01-17.yaml",
                 "GPUS=0,1",
                 "DATASET.TRAIN_CAM_SEQ=CMU3",
                 "DATASET.TEST_CAM_SEQ=CMU3",
