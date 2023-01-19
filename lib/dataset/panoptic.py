@@ -138,7 +138,7 @@ class Panoptic(JointsDataset):
             format(self.image_set, self.cam_seq, self.num_views)
         self.db_file = os.path.join(self.dataset_root, self.db_file)
 
-        if osp.exists(self.db_file):
+        if osp.exists(self.db_file) and False:
             info = pickle.load(open(self.db_file, 'rb'))
             assert info['sequence_list'] == self.sequence_list
             assert info['interval'] == self._interval
