@@ -31,6 +31,8 @@ from utils.utils import load_backbone_panoptic
 import dataset
 import models
 
+import datetime
+
 import wandb
 
 
@@ -65,6 +67,11 @@ def main():
     args = parse_args()
     logger, final_output_dir, tb_log_dir = create_logger(
         config, args.cfg, 'train')
+    
+    now = datetime.now()
+    now_str = now.strftime("%Y%m%d-%H%M%S")
+    final_output_dir += f'/{now_str}/'
+    os.makedirs(final_output_dir, exist_ok=True)
 
     logger.info(pprint.pformat(args))
     logger.info(pprint.pformat(config))
