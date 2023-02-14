@@ -14,12 +14,14 @@
                 "--cfg",
                 // "configs/panoptic/resnet50/save_voxel_pred.yaml"
                 // "configs/panoptic/resnet50/voxel_g2_b1_64_detail.yaml"
-                "configs/panoptic/resnet50/std64.yaml",
-                "GPUS=0,1",
+                // "configs/panoptic/resnet50/std64.yaml",
+                "configs/panoptic/resnet50/multi-cam/std64_CMU4_12-19.yaml",
+                "GPUS=0,1,2,3",
                 "DATASET.TRAIN_CAM_SEQ=CMU3",
                 "DATASET.TEST_CAM_SEQ=CMU3",
+                "DATASET.SAVE_RESULT=Train(CMU4)_Test(CMU3)_02-08",
                 "DATASET.CAMERA_NUM=4",
-                "DEBUG.WANDB_NAME='std64 CMU3'",
+                "DEBUG.WANDB_NAME='Train(CMU4) Test(CMU3)'",
             ],
             "justMyCode": true
         },
