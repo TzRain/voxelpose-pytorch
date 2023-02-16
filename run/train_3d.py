@@ -31,7 +31,7 @@ from utils.utils import load_backbone_panoptic
 import dataset
 import models
 
-import datetime
+from datetime import datetime
 
 import wandb
 
