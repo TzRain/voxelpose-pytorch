@@ -39,6 +39,7 @@ NETWORK:
   - 160
   SIGMA: 3
   NUM_JOINTS: 17
+  # NUM_JOINTS: 15
   USE_GT: False
 LOSS:
   USE_TARGET_WEIGHT: true
@@ -47,7 +48,7 @@ TRAIN:
   SHUFFLE: true
   BEGIN_EPOCH: 0
   END_EPOCH: 30
-  RESUME: true
+  RESUME: False
   OPTIMIZER: adam
   LR: 0.0001
 TEST:

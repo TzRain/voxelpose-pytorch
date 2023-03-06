@@ -71,6 +71,11 @@ class Campus(JointsDataset):
 
         self.db_size = len(self.db)
 
+        self.pred_pose2d_convert = None
+        if cfg.NETWORK.NUM_JOINTS == 15:
+            self.pred_pose2d_convert = [[0,5,6,7,8,9,10,11,12,13,14,15,16],[1,3,9,4,10,5,11,6,12,7,13,8,14],15]
+
+
     def _get_pred_pose2d(self):
         file = os.path.join(self.dataset_root, "pred_campus_maskrcnn_hrnet_coco.pkl")
         with open(file, "rb") as pfile:
@@ -178,9 +183,14 @@ class Campus(JointsDataset):
         bone_correct_parts = np.zeros((num_person, 10))
 
         for i, fi in enumerate(self.frame_range):
-            pred_coco = preds[i].copy()
-            pred_coco = pred_coco[pred_coco[:, 0, 3] >= 0, :, :3]
-            pred = np.stack([self.coco2campus3D(p) for p in copy.deepcopy(pred_coco[:, :, :3])])
+            pred = preds[i].copy()
+            if pred.shape[1] == 17:
+                pred_coco = pred[pred[:, 0, 3] >= 0, :, :3]
+                pred = np.stack([self.coco2shelf3D(p) for p in copy.deepcopy(pred_coco[:, :, :3])])
+                
+            elif pred.shape[1] == 15:
+                pred_panoptic = pred[pred[:, 0, 3] >= 0, :, :3]
+                pred = np.stack([self.panoptic2shelf3D(p) for p in copy.deepcopy(pred_panoptic[:, :, :3])])
 
             for person in range(num_person):
                 gt = actor_3d[person][fi] * 1000.0
@@ -244,3 +254,9 @@ class Campus(JointsDataset):
         campus_pose[13] += head_top
 
         return campus_pose
+
+
+    @staticmethod
+    def panoptic2shelf3D(panoptic_pose):
+        shelf_pose = panoptic_pose[[14, 13, 12, 6, 7, 8, 11, 10, 9, 3, 4, 5, 0, 1]]
+        return shelf_pose

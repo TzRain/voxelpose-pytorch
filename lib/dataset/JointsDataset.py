@@ -132,6 +132,17 @@ class JointsDataset(Dataset):
                 for i in range(len(pred_pose2d[n])):
                     pred_pose2d[n][i, 0:2] = affine_transform(pred_pose2d[n][i, 0:2], trans)
 
+            if self.pred_pose2d_convert is not None:
+                prd_id = self.pred_pose2d_convert[0]
+                tgt_id = self.pred_pose2d_convert[1]
+                tgt_joint_num = self.pred_pose2d_convert[2]
+                new_pred_pose2d = []
+                for i in range(len(pred_pose2d)):
+                    pose2d = np.zeros((tgt_joint_num, 3))
+                    pose2d[tgt_id] = pred_pose2d[i][prd_id]
+                    new_pred_pose2d.append(pose2d)
+                pred_pose2d = new_pred_pose2d
+
             input_heatmap = self.generate_input_heatmap(pred_pose2d)
             input_heatmap = torch.from_numpy(input_heatmap)
         else:

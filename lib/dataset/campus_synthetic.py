@@ -77,8 +77,9 @@ class CampusSynthetic(Dataset):
         self.space_size = np.array(cfg.MULTI_PERSON.SPACE_SIZE)
         self.space_center = np.array(cfg.MULTI_PERSON.SPACE_CENTER)
         self.initial_cube_size = np.array(cfg.MULTI_PERSON.INITIAL_CUBE_SIZE)
-
-        pose_db_file = os.path.join(self.dataset_root, "..", "panoptic_training_pose.pkl")
+        #! HARDCODE
+        pose_db_file = 'data/panoptic_training_pose.pkl'
+        
         self.pose_db = pickle.load(open(pose_db_file, "rb"))
         self.cameras = self._get_cam()
 
